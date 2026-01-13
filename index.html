@@ -4,13 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Royal Wedding Celebration | Priya & Arjun</title>
-    <link rel="icon" href="./assets/logo.png">
+    
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Royal Wedding">
+    <link rel="apple-touch-icon" href="./assets/logo.png">
+    
+    <!-- External Resources -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Playfair+Display:wght@400;500;700&family=Cinzel:wght@400;700&family=Alex+Brush&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- PWA Styles -->
+    <style>
+        /* PWA Install Dialog */
+        .pwa-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pwa-dialog-content {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(40, 40, 40, 0.95));
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3);
+            animation: dialogAppear 0.5s ease-out;
+        }
+
+        @keyframes dialogAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pwa-dialog h3 {
+            font-family: 'Cinzel', serif;
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .pwa-dialog p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        .pwa-dialog-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .pwa-dialog-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            min-width: 100px;
+        }
+
+        .install-btn {
+            background-color: #ffd700;
+            color: #000;
+        }
+
+        .install-btn:hover {
+            background-color: #ffed4e;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .cancel-btn {
+            background-color: transparent;
+            color: #ffd700;
+            border: 2px solid #ffd700;
+        }
+
+        .cancel-btn:hover {
+            background-color: rgba(255, 215, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Install logo in footer */
+        .install-logo {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+
+        .install-logo:hover {
+            transform: scale(1.1);
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+    </style>
+    
+    <!-- Original Styles -->
     <style>
         * {
             margin: 0;
@@ -831,11 +950,22 @@
             scrollbar-width: none;
             
         }
-
-
     </style>
 </head>
 <body>
+    <!-- PWA Install Dialog -->
+    <div class="pwa-dialog" id="pwaDialog">
+        <div class="pwa-dialog-content">
+            <h3>Install Royal Wedding</h3>
+            <p>Do you want to install the <strong>Royal Wedding</strong> app on your device?</p>
+            <p>This will allow you to access the wedding invitation offline and get a better experience.</p>
+            <div class="pwa-dialog-buttons">
+                <button class="pwa-dialog-btn install-btn" id="installButton">Install</button>
+                <button class="pwa-dialog-btn cancel-btn" id="cancelButton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Audio player -->
     <div class="audio-container">
         <audio id="weddingSong" preload="metadata">
@@ -1015,13 +1145,216 @@
                     <div class="copyright" data-aos="fade-down" data-aos-delay="400">
                         <p data-aos="fade-down" data-aos-delay="400">© 2023 Priya & Arjun Wedding Celebration. All rights reserved.</p>
                         <p>Designed with love for our special day</p>
-                        <p class="footer-text" style="font-size: 1rem; display: flex; align-items: center; flex-direction: row; justify-content: center;"><img src="./assets/logo.png" style="border-radius: 50%; height: 10%; width: 10%; margin: auto 15px;"/> Developed By Brahma Web Invitations.</p>
+                        <p class="footer-text" style="font-size: 1rem; display: flex; align-items: center; flex-direction: row; justify-content: center;">
+                            <img src="./assets/logo.png" style="border-radius: 50%; height: 10%; width: 10%; margin: auto 15px;" class="install-logo" id="installLogo"/>
+                             Developed By Brahma Web Invitations.
+                        </p>
                     </div>
                 </div>
             </section>
         </div>
     </div>
 
+    <!-- Inline PWA Script -->
+    <script>
+        // PWA Manifest content
+        const manifest = {
+            "name": "Royal Wedding",
+            "short_name": "RoyalWedding",
+            "description": "Royal Wedding Invitation for Priya & Arjun",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#0a0a0a",
+            "theme_color": "#0a0a0a",
+            "orientation": "portrait",
+            "icons": [
+                {
+                    "src": "./assets/logo.png",
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "any maskable"
+                },
+                {
+                    "src": "./assets/logo.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
+                    "purpose": "any maskable"
+                }
+            ],
+            "categories": ["lifestyle", "events"],
+            "prefer_related_applications": false
+        };
+
+        // Create manifest dynamically
+        function createManifest() {
+            const manifestElement = document.querySelector('link[rel="manifest"]');
+            if (manifestElement) {
+                const blob = new Blob([JSON.stringify(manifest, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                manifestElement.href = url;
+            }
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Create service worker inline
+                const swContent = `
+                    const CACHE_NAME = 'royal-wedding-v1';
+                    const urlsToCache = [
+                        './',
+                        './index.html',
+                        './assets/logo.png',
+                        './assets/img1.png',
+                        './assets/img2.png',
+                        './assets/img3.png',
+                        './assets/img4.png',
+                        './assets/event1.png',
+                        './assets/event2.png',
+                        './assets/event3.png',
+                        './assets/event-frame.png',
+                        './assets/golden-leaf-up.png',
+                        './assets/golden-leaf-down.png',
+                        './assets/map-icon.png',
+                        './assets/pure-love-304010.mp3',
+                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                        'https://unpkg.com/aos@2.3.1/dist/aos.css',
+                        'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Playfair+Display:wght@400;500;700&family=Cinzel:wght@400;700&family=Alex+Brush&family=Montserrat:wght@300;400;500&display=swap',
+                        'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css',
+                        'https://unpkg.com/aos@2.3.1/dist/aos.js',
+                        'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
+                        'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+                        'https://cdn-icons-png.flaticon.com/512/1993/1993758.png'
+                    ];
+
+                    self.addEventListener('install', event => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then(cache => {
+                                    return cache.addAll(urlsToCache);
+                                })
+                        );
+                    });
+
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then(response => {
+                                    if (response) {
+                                        return response;
+                                    }
+                                    return fetch(event.request);
+                                })
+                        );
+                    });
+
+                    self.addEventListener('activate', event => {
+                        const cacheWhitelist = [CACHE_NAME];
+                        event.waitUntil(
+                            caches.keys().then(cacheNames => {
+                                return Promise.all(
+                                    cacheNames.map(cacheName => {
+                                        if (cacheWhitelist.indexOf(cacheName) === -1) {
+                                            return caches.delete(cacheName);
+                                        }
+                                    })
+                                );
+                            })
+                        );
+                    });
+                `;
+
+                // Create service worker blob and register it
+                const blob = new Blob([swContent], {type: 'application/javascript'});
+                const swBlobUrl = URL.createObjectURL(blob);
+
+                navigator.serviceWorker.register(swBlobUrl)
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // PWA Installation Logic
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        // PWA Dialog functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            createManifest();
+            
+            const pwaDialog = document.getElementById('pwaDialog');
+            const installButton = document.getElementById('installButton');
+            const cancelButton = document.getElementById('cancelButton');
+            const installLogo = document.getElementById('installLogo');
+            let clickCount = 0;
+            let clickTimer;
+
+            // Double click on logo to show install dialog
+            installLogo.addEventListener('click', function() {
+                clickCount++;
+                
+                if (clickCount === 1) {
+                    clickTimer = setTimeout(() => {
+                        clickCount = 0;
+                    }, 300);
+                } else if (clickCount === 2) {
+                    clearTimeout(clickTimer);
+                    showInstallDialog();
+                    clickCount = 0;
+                }
+            });
+
+            // Show install dialog
+            function showInstallDialog() {
+                pwaDialog.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Hide install dialog
+            function hideInstallDialog() {
+                pwaDialog.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
+            // Install button click
+            installButton.addEventListener('click', async () => {
+                hideInstallDialog();
+                
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    if (outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                        alert('Royal Wedding app is being installed on your device!');
+                    }
+                    deferredPrompt = null;
+                } else {
+                    alert('To install this app, look for the "Add to Home Screen" option in your browser menu.');
+                }
+            });
+
+            // Cancel button click
+            cancelButton.addEventListener('click', hideInstallDialog);
+
+            // Close dialog when clicking outside
+            pwaDialog.addEventListener('click', (e) => {
+                if (e.target === pwaDialog) {
+                    hideInstallDialog();
+                }
+            });
+        });
+    </script>
+
+    <!-- Original JavaScript -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         // Initialize AOS (Animate on Scroll)
